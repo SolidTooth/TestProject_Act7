@@ -1,5 +1,86 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &4774306308649284643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758314866821517241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9105a70a3923aa142bd8b40b6d8a02a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventList:
+  - eventTag: attackEffectOn
+    aniEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7313086688243698381}
+          m_MethodName: attackEffectOn
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    isEnable: 1
+    isRepeat: 1
+  - eventTag: attackEffectOff
+    aniEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7313086688243698381}
+          m_MethodName: attackEffectOff
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    isEnable: 1
+    isRepeat: 1
+  - eventTag: attackTriggerOn
+    aniEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7313086688243698381}
+          m_MethodName: attackTriggerOn
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    isEnable: 1
+    isRepeat: 1
+  - eventTag: attackTriggerOff
+    aniEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7313086688243698381}
+          m_MethodName: attackTriggerOff
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    isEnable: 1
+    isRepeat: 1
 --- !u!1 &7313086688201218481
 GameObject:
   m_ObjectHideFlags: 0
@@ -44,6 +125,7 @@ GameObject:
   - component: {fileID: 7313086688243698416}
   - component: {fileID: 7313086688243698381}
   - component: {fileID: 7313086688243698382}
+  - component: {fileID: 8958276676265011330}
   m_Layer: 0
   m_Name: UnitBase
   m_TagString: Untagged
@@ -118,10 +200,8 @@ MonoBehaviour:
   unitInfo:
     maxHp: 100
     damage: 10
-    attackDelay: 1
     moveSpeed: 1
     lookRange: 3
-    attackRange: 1
   isAutoLife: 1
   modelAni: {fileID: 1758314866830884293}
   hpCtrl: {fileID: 7313086689441544318}
@@ -131,6 +211,7 @@ MonoBehaviour:
   isLookLock: 0
   navAgentCtrl: {fileID: 7313086688243698383}
   targetCtrl: {fileID: 7313086688243698382}
+  weaponCtrl: {fileID: 8958276676265011330}
 --- !u!114 &7313086688243698382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,6 +229,21 @@ MonoBehaviour:
   isAutoTargeting: 1
   targetCtrl: {fileID: 0}
   isTargeting: 0
+--- !u!114 &8958276676265011330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7313086688243698418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 038ea913bbf4515428bce456b8b56e1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basicWeapon: {fileID: 7313086688372810899}
+  skillWeapon: []
+  nowSkill: {fileID: 0}
 --- !u!1 &7313086688372810901
 GameObject:
   m_ObjectHideFlags: 0
@@ -159,7 +255,7 @@ GameObject:
   - component: {fileID: 7313086688372810900}
   - component: {fileID: 7313086688372810898}
   - component: {fileID: 7313086688372810899}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: WeaponTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,8 +270,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7313086688372810901}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.076, y: 1.144, z: 0.845}
+  m_LocalScale: {x: 1.5235, y: 1, z: 1.351}
   m_Children: []
   m_Father: {fileID: 7313086688201218480}
   m_RootOrder: 0
@@ -205,8 +301,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e9309cabf85a8843a401940d987f461, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackMotionNum: 0
   skillDamagePercent: 1
+  attackRange: 1
+  attackCoolTime: 1
   targetKind: 2
+  myColl: {fileID: 7313086688372810898}
 --- !u!1 &7313086689441544290
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,6 +462,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8199b65e34e15b0488860a427c1be763, type: 3}
+--- !u!1 &1758314866821517241 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9014948160264034273, guid: 8199b65e34e15b0488860a427c1be763,
+    type: 3}
+  m_PrefabInstance: {fileID: 7313086687720380504}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1758314866821091929 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9014948160264391169, guid: 8199b65e34e15b0488860a427c1be763,

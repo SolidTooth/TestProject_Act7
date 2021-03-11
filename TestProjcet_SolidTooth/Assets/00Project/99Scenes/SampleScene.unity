@@ -378,7 +378,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh15294
+  m_Name: pb_Mesh15298
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -652,7 +652,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh15282
+  m_Name: pb_Mesh15286
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -816,15 +816,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 6158067970708101905, guid: 45cb5eda615d23247ba28d2cece234ef,
+    - target: {fileID: 6158067970304800076, guid: 45cb5eda615d23247ba28d2cece234ef,
         type: 3}
-      propertyPath: myKind
+      propertyPath: attackCoolTime
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6158067970708101905, guid: 45cb5eda615d23247ba28d2cece234ef,
-        type: 3}
-      propertyPath: enemyTargetKind
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6158067970708101933, guid: 45cb5eda615d23247ba28d2cece234ef,
         type: 3}

@@ -50,13 +50,17 @@ public class TargetCtrl : MonoBehaviour
         {
             findTarget();
         }
+        if (targetCtrl != null && targetCtrl.isTargeting == false)
+        {//타겟이 있는 상태에서 호출된거면 타겟 상태를 확인해봐야함
+            targetCtrl = null;
+        }
     }
     public void checkTarget()
     {
         if (targetCtrl == null || targetCtrl.isTargeting == false || targetCtrl.gameObject.activeSelf == false)
         {//씬에서 안쓰거나 타겟팅이 불가능할때 다른 타겟 탐색
             targetCtrl = null;
-            findTarget();
+            findAutoTargeting();
         }
     }
 

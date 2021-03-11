@@ -10,11 +10,9 @@ public class WeaponTrigger_One : WeaponTrigger
             HpCtrl targetHpCtrl = other.GetComponent<HpCtrl>();
             if (targetHpCtrl != null)
             {
-                attackOff();//공격성공
-                if (targetHpCtrl.setDamage(myUnitCtrl.UnitInfo.Damage * skillDamagePercent))
-                {
-                    myUnitCtrl.TargetCtrl.findAutoTargeting();//타겟 사망 새로운 타겟 탐색
-                }
+                attackTriggerOff();//공격성공
+
+                damageSend(targetHpCtrl);
             }
         }
     }

@@ -7,6 +7,8 @@ public class UnitCtrl : MonoBehaviour
     private static readonly int aniTag_Idle = Animator.StringToHash("Idle");
     private static readonly int aniTag_Move = Animator.StringToHash("Move");
     private static readonly int aniTag_Attack = Animator.StringToHash("Attack");
+    private static readonly int aniTag_Death = Animator.StringToHash("Death");
+    private static readonly int aniTag_Hit = Animator.StringToHash("Hit");
 
     [SerializeField]
     private UnitInfo unitInfo; public UnitInfo UnitInfo => unitInfo;
@@ -14,7 +16,7 @@ public class UnitCtrl : MonoBehaviour
     private bool isAutoLife;
 
     [SerializeField]
-    private Animator modelAni;
+    private Animator modelAni; public Animator ModelAni => modelAni;
     private AnimatorStateInfo aniStateInfo;
     private int nowAniTag;
 
@@ -29,6 +31,7 @@ public class UnitCtrl : MonoBehaviour
     private bool isMoveLock;
     [SerializeField]
     private bool isLookLock;
+
 
     [Header("타겟관련")]
     [SerializeField]
@@ -55,7 +58,8 @@ public class UnitCtrl : MonoBehaviour
         if (targetCtrl == null) targetCtrl = GetComponent<TargetCtrl>();
         targetCtrl?.setUnitCtrl(this);
 
-        if (weaponCtrl != null) weaponCtrl.setUnitCtrl(this);
+        if (weaponCtrl != null) weaponCtrl = GetComponent<WeaponCtrl>();
+        weaponCtrl.setUnitCtrl(this);
 
         if (isAutoLife) lifeOn();
     }
@@ -86,10 +90,12 @@ public class UnitCtrl : MonoBehaviour
                 break;
             case UnitState.Attack:
                 //공격의 의한 이동, 회전 잠금 해제
-                isLookLock = false;
-                isMoveLock = false;
-                break;
-            case UnitState.Skill:
+                if (nextState != UnitState.Condition)
+                {//다음 행동이 상태이상이 아니라면
+                    weaponCtrl.attackEnd();
+                    isLookLock = false;
+                    isMoveLock = false;
+                }
                 break;
             case UnitState.Condition:
                 break;
@@ -98,13 +104,16 @@ public class UnitCtrl : MonoBehaviour
         switch (nextState)
         {//상태 들어올때 행동
             case UnitState.Death:
+                weaponCtrl.attackCalcle();//공격중단
                 targetCtrl.lifeOff();
+                modelAni.SetTrigger("Death");//사망 모션 호출
                 break;
             case UnitState.Init://초기화
                 hpCtrl.resetLife();
                 targetCtrl.lifeOn();
-                unitInfo.attackInit();
+                weaponCtrl.attackInit();
                 modelAni.SetFloat("Forward", 0f);
+                modelAni.SetTrigger("Reset");
                 changeState(UnitState.Idle);
                 break;
             case UnitState.Idle:
@@ -115,16 +124,12 @@ public class UnitCtrl : MonoBehaviour
                 navAgentCtrl.chaseOn();
                 break;
             case UnitState.Attack:
-                unitInfo.attackInit();
+                weaponCtrl.attackCall();
                 isLookLock = true;
                 isMoveLock = true;
-                //lookAtPos();공격호출시 바라보기 < 항상바라보는 형태로 변경함
-                modelAni.SetInteger("AttackNum", 0);
-                modelAni.SetTrigger("AttackTrigger");
-                break;
-            case UnitState.Skill:
                 break;
             case UnitState.Condition:
+                weaponCtrl.attackCalcle();
                 break;
         }
 
@@ -139,12 +144,12 @@ public class UnitCtrl : MonoBehaviour
             case UnitState.Init:
                 break;
             case UnitState.Idle:
-                if (targetDis > unitInfo.AttackRange)
+                if (targetDis > weaponCtrl.NowAttackRange)
                 {
                     //공격범위밖 이동시작
                     changeState(UnitState.Move);
                 }
-                else if (targetCtrl.TargetTran != null && unitInfo.isAttackOn())
+                else if (weaponCtrl != null && targetCtrl.TargetTran != null && weaponCtrl.IsNowAttackOn)
                 {
                     //공격범위안 - 타겟있음
                     changeState(UnitState.Attack);
@@ -157,7 +162,7 @@ public class UnitCtrl : MonoBehaviour
                 }
                 break;
             case UnitState.Attack:
-                if (checkAniTag(aniTag_Attack, aniTag_Idle))
+                if (checkAniTagChange(aniTag_Attack, aniTag_Idle))
                 {
                     //if (AttackCountCheck()) //연타 공격에 대한 구상
                     //{//어택횟수가 남음
@@ -170,14 +175,13 @@ public class UnitCtrl : MonoBehaviour
                     changeState(UnitState.Idle);//공격완료후 대기로
                 }
                 break;
-            case UnitState.Skill:
-                break;
             case UnitState.Condition:
                 break;
         }
     }
     private void calcTargetData()
     {
+        targetCtrl.checkTarget();
         if (targetCtrl.TargetTran != null)//타겟있음
         {
             Vector3 myPos = transform.position;
@@ -186,7 +190,6 @@ public class UnitCtrl : MonoBehaviour
 
             targetDis = Vector3.Distance(myPos, targetPos);
             targetDir = targetPos - myPos;
-
         }
         else
         {
@@ -207,7 +210,7 @@ public class UnitCtrl : MonoBehaviour
         nextState = newState;
     }
 
-    public bool checkAniTag(int agoTag, int nextTag)//애니메이션 넘어간것 체크
+    public bool checkAniTagChange(int agoTag, int nextTag)//애니메이션 넘어간것 체크
     {
         aniStateInfo = modelAni.GetCurrentAnimatorStateInfo(0);
         if (agoTag != nowAniTag)
@@ -219,9 +222,16 @@ public class UnitCtrl : MonoBehaviour
         return nowAniTag == nextTag;
     }
 
+    public bool checkAniTag(int nextTag)//애니메이션 현재를 체크
+    {
+        aniStateInfo = modelAni.GetCurrentAnimatorStateInfo(0);
+        nowAniTag = aniStateInfo.tagHash;
+        return nowAniTag == nextTag;
+    }
+
     public float getChaseRange()
     {
-        return unitInfo.AttackRange;
+        return weaponCtrl.NowAttackRange;
     }
 
     public void moveNav(Vector3 nextMove)
@@ -245,6 +255,40 @@ public class UnitCtrl : MonoBehaviour
         //transform.eulerAngles = nextRot;
         transform.Rotate(Vector3.up, nextRotY);
     }
+
+    public void hitMotion()
+    {
+        if (nowState == UnitState.Idle || nowState == UnitState.Move)//대기나 이동,Hit 상태에서만 hit모션
+        {
+            modelAni.SetTrigger("Hit");
+        }
+    }
+
+    //애니메이션 이벤트키 호출
+    public void attackEffectOn()
+    {
+        weaponCtrl.NowWeapon.attackEffectOn();
+    }
+    public void attackEffectOff()
+    {
+        weaponCtrl.NowWeapon.attackEffectOn();
+    }
+    public void attackTriggerOn()
+    {
+        weaponCtrl.NowWeapon.attackTriggerOn();
+    }
+    public void attackTriggerOff()
+    {
+        weaponCtrl.NowWeapon.attackTriggerOff();
+    }
+
+    private void OnGUI()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            lifeOn();//부활
+        }
+    }
 }
 
 public enum UnitState
@@ -255,6 +299,5 @@ public enum UnitState
     Idle = 1,//대기
     Move = 2,//이동
     Attack = 3,//공격
-    Skill = 4,//스킬 - 스킬 사용후 외부적으로 풀어줘야함
-    Condition = 5,//상태이상
+    Condition = 4,//상태이상 - 주로 기절같은 그로기 상태
 }

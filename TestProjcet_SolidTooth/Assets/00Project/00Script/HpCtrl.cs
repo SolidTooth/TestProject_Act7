@@ -33,6 +33,7 @@ public class HpCtrl : MonoBehaviour
             myUnitCtrl.changeState(UnitState.Death);
             return true;
         }
+        myUnitCtrl.hitMotion();//피격당했을때 hit모션
         return false;
     }
     public void resetLife()
