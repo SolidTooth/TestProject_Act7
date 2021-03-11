@@ -231,7 +231,8 @@ public class UnitCtrl : MonoBehaviour
 
     public float getChaseRange()
     {
-        return weaponCtrl.NowAttackRange;
+        //현재 타겟이 없거나 적이 아니면 가까이 이동만, 적일 경우 공격 사거리까지 접근
+        return targetCtrl.IsTargetEnemy ? 0.2f : weaponCtrl.NowAttackRange;
     }
 
     public void moveNav(Vector3 nextMove)

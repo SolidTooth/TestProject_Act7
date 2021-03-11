@@ -15,7 +15,7 @@ public class TargetCtrl : MonoBehaviour
 
     [SerializeField]
     private TargetCtrl targetCtrl; public Transform TargetTran => targetCtrl != null ? targetCtrl.transform : null;
-
+    public bool IsTargetEnemy => targetCtrl != null ? targetCtrl.myKind == enemyTargetKind : false;
     [SerializeField]
     private bool isTargeting; public bool IsTargeting => isTargeting;//Life 체크와 다름, 살아있지만 타겟팅 안될수있음 - 지금은 굳이 만들필요없음
 

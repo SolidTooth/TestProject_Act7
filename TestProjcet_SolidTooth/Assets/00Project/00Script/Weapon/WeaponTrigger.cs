@@ -92,7 +92,7 @@ public abstract class WeaponTrigger : MonoBehaviour
     {//상태이상 적용같은건 오버라이드로 처리
         if (targetHpCtrl.setDamage(myUnitCtrl.UnitInfo.Damage * skillDamagePercent))
         {
-            myUnitCtrl.TargetCtrl.findAutoTargeting();//타겟 사망 새로운 타겟 탐색
+            myUnitCtrl.TargetCtrl.checkTarget();//타겟 사망 새로운 타겟 탐색
         }
     }
 }

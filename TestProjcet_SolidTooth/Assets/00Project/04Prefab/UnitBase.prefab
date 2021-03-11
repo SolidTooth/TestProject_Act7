@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 038ea913bbf4515428bce456b8b56e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basicWeapon: {fileID: 7313086688372810899}
+  basicWeapon: {fileID: 0}
   skillWeapon: []
   nowSkill: {fileID: 0}
 --- !u!1 &7313086688372810901
@@ -254,7 +254,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7313086688372810900}
   - component: {fileID: 7313086688372810898}
-  - component: {fileID: 7313086688372810899}
   m_Layer: 9
   m_Name: WeaponTrigger
   m_TagString: Untagged
@@ -270,8 +269,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7313086688372810901}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.076, y: 1.144, z: 0.845}
-  m_LocalScale: {x: 1.5235, y: 1, z: 1.351}
+  m_LocalPosition: {x: 0.076, y: 1.144, z: 0.81}
+  m_LocalScale: {x: 2.458167, y: 1, z: 1.5309532}
   m_Children: []
   m_Father: {fileID: 7313086688201218480}
   m_RootOrder: 0
@@ -289,24 +288,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7313086688372810899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7313086688372810901}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e9309cabf85a8843a401940d987f461, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackMotionNum: 0
-  skillDamagePercent: 1
-  attackRange: 1
-  attackCoolTime: 1
-  targetKind: 2
-  myColl: {fileID: 7313086688372810898}
 --- !u!1 &7313086689441544290
 GameObject:
   m_ObjectHideFlags: 0
