@@ -109,15 +109,18 @@ public class UnitCtrl : MonoBehaviour
                 modelAni.SetTrigger("Death");//사망 모션 호출
                 break;
             case UnitState.Init://초기화
-                hpCtrl.resetLife();
-                targetCtrl.lifeOn();
-                weaponCtrl.attackInit();
+                hpCtrl.resetLife();//체력 초기화
+                navAgentCtrl.posInit();//위치 초기화
+                targetCtrl.lifeOn();//타겟시스템 초기화
+                weaponCtrl.attackInit();//무기 초기화
+                //애니메이션 초기화
                 modelAni.SetFloat("Forward", 0f);
                 modelAni.SetTrigger("Reset");
-                changeState(UnitState.Idle);
+                changeState(UnitState.Idle);//초기화 완료 상태변경
                 break;
             case UnitState.Idle:
                 modelAni.SetFloat("Forward", 0f);
+                //targetCtrl.findAutoTargeting();
                 break;
             case UnitState.Move:
                 modelAni.SetFloat("Forward", 1f);
@@ -232,7 +235,7 @@ public class UnitCtrl : MonoBehaviour
     public float getChaseRange()
     {
         //현재 타겟이 없거나 적이 아니면 가까이 이동만, 적일 경우 공격 사거리까지 접근
-        return targetCtrl.IsTargetEnemy ? 0.2f : weaponCtrl.NowAttackRange;
+        return targetCtrl.IsTargetEnemy ? weaponCtrl.NowAttackRange : 0.2f;
     }
 
     public void moveNav(Vector3 nextMove)

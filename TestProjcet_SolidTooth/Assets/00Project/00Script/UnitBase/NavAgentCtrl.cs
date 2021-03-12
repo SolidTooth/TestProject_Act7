@@ -16,15 +16,21 @@ public class NavAgentCtrl : MonoBehaviour
 
     [SerializeField]
     private bool isChase; public bool IsChase => isChase;//추격중
-
+    [SerializeField]
+    private float dis;
     public void setUnitCtrl(UnitCtrl newUnitCtrl)
     {
         unitCtrl = newUnitCtrl;
+    }
+    public void posInit()
+    {
+        unitCtrl.transform.position = agent.nextPosition;
     }
 
     public void chaseOn()
     {
         isChase = true;
+        agent.nextPosition = unitCtrl.transform.position;
         agent.SetDestination(unitCtrl.TargetCtrl.TargetTran.position);
         StartCoroutine(cor_ChaseUpdate());
     }
@@ -34,6 +40,7 @@ public class NavAgentCtrl : MonoBehaviour
         {
             yield return null;
             unitCtrl.moveNav(agent.nextPosition);
+            dis = agent.remainingDistance;
             if (agent.remainingDistance < unitCtrl.getChaseRange())
             {
                 isChase = false;

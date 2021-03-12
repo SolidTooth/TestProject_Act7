@@ -41,6 +41,7 @@ public class TargetManager : MonoBehaviour
             {
                 //if (findList[i].isFindable == false) continue;//비활성화된 상태 > FindAll로 해결 
                 float dis = Vector3.Distance(finder.transform.position, findList[i].transform.position);
+                //Debug.Log("타겟" + findList[i].name + " : " + dis);
                 if (minDis > dis || minIndex < 0)
                 {
                     minIndex = i;

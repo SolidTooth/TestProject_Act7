@@ -18,6 +18,9 @@ public abstract class WeaponTrigger : MonoBehaviour
     private float attackCoolTemp; public bool IsAttackOn => attackCoolTemp >= attackCoolTime;
     protected bool isAttacking; public bool IsAttacking => isAttacking;
 
+    [SerializeField]
+    private GameObject effectObj;
+
     [Header("자동입력")]
     [SerializeField]
     protected TargetKind targetKind;
@@ -72,11 +75,17 @@ public abstract class WeaponTrigger : MonoBehaviour
 
     public void attackEffectOn()
     {
-
+        if (effectObj != null)
+        {
+            effectObj.SetActive(true);
+        }
     }
     public void attackEffectOff()
     {
-
+        if (effectObj != null)
+        {
+            effectObj.SetActive(false);
+        }
     }
 
     public void attackTriggerOn()

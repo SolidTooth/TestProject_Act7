@@ -57,7 +57,7 @@ public class TargetCtrl : MonoBehaviour
     }
     public void checkTarget()
     {
-        if (targetCtrl == null || targetCtrl.isTargeting == false || targetCtrl.gameObject.activeSelf == false)
+        if (targetCtrl == null || targetCtrl.isTargeting == false || targetCtrl.gameObject.activeInHierarchy == false)
         {//씬에서 안쓰거나 타겟팅이 불가능할때 다른 타겟 탐색
             targetCtrl = null;
             findAutoTargeting();
