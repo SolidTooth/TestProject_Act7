@@ -12,9 +12,4 @@ public class UnitInfo
     // 이동속도
     [SerializeField]
     private float moveSpeed; public float MoveSpeed => moveSpeed;
-    // 인식거리
-    [SerializeField]
-    private float lookRange; public float LookRange => lookRange;//0은 무제한
-    // 추격제한거리(없음)
-
 }

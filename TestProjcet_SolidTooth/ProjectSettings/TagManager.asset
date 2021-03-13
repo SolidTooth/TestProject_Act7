@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - HP
+  - PLAYER
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - PlayerTrigger
   - Enemy
   - EnemyTrigger
-  - 
+  - Floor
   - 
   - 
   - 

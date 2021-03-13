@@ -7,12 +7,7 @@ public class NavAgentCtrl : MonoBehaviour
 {
     private UnitCtrl unitCtrl;
     private NavMeshAgent agent;
-    private void Awake()
-    {
-        agent = GetComponent<NavMeshAgent>();
-        agent.updatePosition = false;
-        agent.updateRotation = false;
-    }
+
 
     [SerializeField]
     private bool isChase; public bool IsChase => isChase;//추격중
@@ -21,15 +16,23 @@ public class NavAgentCtrl : MonoBehaviour
     public void setUnitCtrl(UnitCtrl newUnitCtrl)
     {
         unitCtrl = newUnitCtrl;
+        agent = GetComponent<NavMeshAgent>();
+        agent.updatePosition = false;
+        agent.updateRotation = false;
     }
-    public void posInit()
+    public void posNavInit()
     {
         unitCtrl.transform.position = agent.nextPosition;
+    }
+    public void posTranInit()
+    {
+        agent.nextPosition = unitCtrl.transform.position;
     }
 
     public void chaseOn()
     {
         isChase = true;
+        agent.speed = unitCtrl.UnitInfo.MoveSpeed;
         agent.nextPosition = unitCtrl.transform.position;
         agent.SetDestination(unitCtrl.TargetCtrl.TargetTran.position);
         StartCoroutine(cor_ChaseUpdate());
@@ -41,7 +44,7 @@ public class NavAgentCtrl : MonoBehaviour
             yield return null;
             unitCtrl.moveNav(agent.nextPosition);
             dis = agent.remainingDistance;
-            if (agent.remainingDistance < unitCtrl.getChaseRange())
+            if (agent.remainingDistance < unitCtrl.getChaseRange() || unitCtrl.getChaseRange() <= 0)
             {
                 isChase = false;
                 agent.ResetPath();
@@ -49,7 +52,6 @@ public class NavAgentCtrl : MonoBehaviour
                 break;
             }
             agent.SetDestination(unitCtrl.TargetCtrl.TargetTran.position);
-
         }
     }
 

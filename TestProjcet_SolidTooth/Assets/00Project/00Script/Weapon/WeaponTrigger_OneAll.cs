@@ -14,5 +14,5 @@ public class WeaponTrigger_OneAll : WeaponTrigger
             }
         }
     }
-  
+
 }

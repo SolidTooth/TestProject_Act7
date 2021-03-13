@@ -38,15 +38,21 @@ public class UnitCtrl : MonoBehaviour
     private NavAgentCtrl navAgentCtrl;
     [SerializeField]
     private TargetCtrl targetCtrl; public TargetCtrl TargetCtrl => targetCtrl;
-    private float targetDis;
-    private Vector3 targetDir;
+
 
     [SerializeField]
-    private WeaponCtrl weaponCtrl;
+    private WeaponCtrl weaponCtrl; public WeaponCtrl WeaponCtrl => weaponCtrl;
 
-
-
-    private void Start()
+    private void OnEnable()
+    {
+        if (isAutoLife) lifeOn();
+        navAgentCtrl.posNavInit();//네비 위로 위치 초기화
+    }
+    private void OnDisable()
+    {
+        lifeOff();
+    }
+    private void Awake()
     {
         if (hpCtrl == null) hpCtrl = GetComponent<HpCtrl>();
         hpCtrl.setUnitCtrl(this);
@@ -61,20 +67,23 @@ public class UnitCtrl : MonoBehaviour
         if (weaponCtrl != null) weaponCtrl = GetComponent<WeaponCtrl>();
         weaponCtrl.setUnitCtrl(this);
 
-        if (isAutoLife) lifeOn();
+    }
+    private void Update()
+    {
+        checkState();
+        updateState();
     }
     public void lifeOn()
     {
         changeState(UnitState.Init);
     }
-
-    private void Update()
+    public void lifeOff()
     {
-        calcTargetData();
-        lookAtPos();
-        checkState();
-        updateState();
+        weaponCtrl.attackCalcle();//공격중단
+        targetCtrl.removeTargetList();
     }
+
+
     private void checkState()
     {
         if (nowState == nextState) return;
@@ -87,6 +96,7 @@ public class UnitCtrl : MonoBehaviour
             case UnitState.Idle:
                 break;
             case UnitState.Move:
+                navAgentCtrl.chaseOff();//이동에서 빠져나오면 네비이동 꺼줌
                 break;
             case UnitState.Attack:
                 //공격의 의한 이동, 회전 잠금 해제
@@ -104,14 +114,13 @@ public class UnitCtrl : MonoBehaviour
         switch (nextState)
         {//상태 들어올때 행동
             case UnitState.Death:
-                weaponCtrl.attackCalcle();//공격중단
-                targetCtrl.lifeOff();
+                lifeOff();
                 modelAni.SetTrigger("Death");//사망 모션 호출
                 break;
             case UnitState.Init://초기화
                 hpCtrl.resetLife();//체력 초기화
-                navAgentCtrl.posInit();//위치 초기화
-                targetCtrl.lifeOn();//타겟시스템 초기화
+                navAgentCtrl.posNavInit();//위치 초기화
+                targetCtrl.setTargetList();//타겟시스템 초기화
                 weaponCtrl.attackInit();//무기 초기화
                 //애니메이션 초기화
                 modelAni.SetFloat("Forward", 0f);
@@ -120,13 +129,17 @@ public class UnitCtrl : MonoBehaviour
                 break;
             case UnitState.Idle:
                 modelAni.SetFloat("Forward", 0f);
-                //targetCtrl.findAutoTargeting();
+                lookAtPos();
                 break;
             case UnitState.Move:
+                navAgentCtrl.posTranInit();
                 modelAni.SetFloat("Forward", 1f);
                 navAgentCtrl.chaseOn();
                 break;
             case UnitState.Attack:
+                Debug.Log("공격 요청");
+                modelAni.SetFloat("Forward", 0f);
+                lookAtPos();
                 weaponCtrl.attackCall();
                 isLookLock = true;
                 isMoveLock = true;
@@ -147,12 +160,15 @@ public class UnitCtrl : MonoBehaviour
             case UnitState.Init:
                 break;
             case UnitState.Idle:
-                if (targetDis > weaponCtrl.NowAttackRange)
+                targetCtrl.checkTarget();//타겟의 상태를 확인해서 변경할지
+                //targetCtrl.findAutoTargeting();//항상 새로운 타겟을 찾을지는 기획의도가 필요
+                if (targetCtrl.TargetDis == 0) return;//타겟 없음 제자리에서 대기
+                if (weaponCtrl.NowAttackRange > 0 && targetCtrl.TargetDis > weaponCtrl.NowAttackRange)
                 {
                     //공격범위밖 이동시작
                     changeState(UnitState.Move);
                 }
-                else if (weaponCtrl != null && targetCtrl.TargetTran != null && weaponCtrl.IsNowAttackOn)
+                else if (weaponCtrl.IsNowAttackOn && (targetCtrl.TargetTran != null || weaponCtrl.NowAttackRange <= 0))
                 {
                     //공격범위안 - 타겟있음
                     changeState(UnitState.Attack);
@@ -162,6 +178,10 @@ public class UnitCtrl : MonoBehaviour
                 if (navAgentCtrl.IsChase == false)
                 {
                     changeState(UnitState.Idle);
+                }
+                else if (weaponCtrl.NowAttackRange <= 0)
+                {
+                    changeState(UnitState.Attack);
                 }
                 break;
             case UnitState.Attack:
@@ -182,28 +202,7 @@ public class UnitCtrl : MonoBehaviour
                 break;
         }
     }
-    private void calcTargetData()
-    {
-        targetCtrl.checkTarget();
-        if (targetCtrl.TargetTran != null)//타겟있음
-        {
-            Vector3 myPos = transform.position;
-            Vector3 targetPos = targetCtrl.TargetTran.position;
-            myPos.y = targetPos.y = 0;//Y축을 통일해서 평면상의 거리와 방향을 계산
 
-            targetDis = Vector3.Distance(myPos, targetPos);
-            targetDir = targetPos - myPos;
-        }
-        else
-        {
-            targetCtrl.findAutoTargeting();
-            if (targetDis > 0)//타겟없음 대기
-            {
-                targetDis = -1;
-                targetDir = Vector3.zero;
-            }
-        }
-    }
 
 
 
@@ -234,7 +233,7 @@ public class UnitCtrl : MonoBehaviour
 
     public float getChaseRange()
     {
-        //현재 타겟이 없거나 적이 아니면 가까이 이동만, 적일 경우 공격 사거리까지 접근
+        //현재 타겟이 없거나 타겟팅불가 적이 아니면 가까이 이동만, 적일 경우 공격 사거리까지 접근
         return targetCtrl.IsTargetEnemy ? weaponCtrl.NowAttackRange : 0.2f;
     }
 
@@ -242,16 +241,16 @@ public class UnitCtrl : MonoBehaviour
     {
         if (isMoveLock) return;
         Vector3 nextDir = nextMove - transform.position;//이동은 네비기준이니까 Dir 따로 계산
-        nextDir = transform.InverseTransformPoint(transform.position + nextDir);
-        transform.Translate(nextDir * unitInfo.MoveSpeed);
-        //modelAni.SetFloat("Forward", 1f);//Root 모션등 이동값을 따로 입력해줘야할경우
+        lookAtPos(nextDir);
+        transform.Translate(nextDir, Space.World);
         //Debug.Log(nextDir.ToString("F3"));
     }
 
     public void lookAtPos()
     {
-        lookAtPos(targetDir);
+        lookAtPos(targetCtrl.TargetDir);
     }
+
     private void lookAtPos(Vector3 lookDir)
     {
         if (isLookLock) return;
@@ -262,7 +261,7 @@ public class UnitCtrl : MonoBehaviour
 
     public void hitMotion()
     {
-        if (nowState == UnitState.Idle || nowState == UnitState.Move)//대기나 이동,Hit 상태에서만 hit모션
+        if (nowState == nextState && (nowState == UnitState.Idle || nowState == UnitState.Move))//대기나 이동,Hit 상태에서만 hit모션
         {
             modelAni.SetTrigger("Hit");
         }
