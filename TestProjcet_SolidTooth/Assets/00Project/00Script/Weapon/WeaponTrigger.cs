@@ -8,7 +8,7 @@ public abstract class WeaponTrigger : MonoBehaviour
     [SerializeField]
     private int skillNum; public int SkillNum => skillNum;
     [SerializeField]
-    [Min(1)]
+    [Min(0f)]
     protected float skillDamagePercent = 1;//스킬 데미지 증가치
     [SerializeField]
     protected float attackSpeed = 1;
@@ -146,5 +146,10 @@ public abstract class WeaponTrigger : MonoBehaviour
             Debug.Log("타겟 사망");
             myUnitCtrl.TargetCtrl.checkTarget();//타겟 사망 새로운 타겟 탐색
         }
+    }
+
+    protected void knockbackCall(UnitCtrl targetUnit, Transform pivot, float knockbackPower)
+    {
+        targetUnit.changeState(UnitState.Condition);
     }
 }

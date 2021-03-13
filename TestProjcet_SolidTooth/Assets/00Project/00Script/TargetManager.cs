@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -53,4 +54,14 @@ public class TargetManager : MonoBehaviour
         }
         return null;
     }
+    public List<TargetCtrl> findRangeTarget(Transform findPivot, TargetKind findTargetKind, float checkRange)
+    {
+        if (targetListDic.ContainsKey(findTargetKind))
+        {
+            return targetListDic[findTargetKind].FindAll(x => x.IsTargeting && Vector3.Distance(x.transform.position, findPivot.position) < checkRange);
+        }
+        return null;
+    }
+
+
 }

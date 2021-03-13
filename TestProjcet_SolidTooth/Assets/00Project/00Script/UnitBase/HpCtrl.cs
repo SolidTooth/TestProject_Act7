@@ -3,7 +3,7 @@ using System.Collections;
 
 public class HpCtrl : MonoBehaviour
 {
-    private UnitCtrl myUnitCtrl;
+    private UnitCtrl myUnitCtrl; public UnitCtrl UnitCtrl => myUnitCtrl;
     private float maxHp;
     [SerializeField]
     private float nowHp; public float NowHp => nowHp;
@@ -44,7 +44,11 @@ public class HpCtrl : MonoBehaviour
     {
         if (isLife == false) return true;//죽은자에게 칼을...
         nowHp -= damage;
-        hpBarCtrl?.setBarValue(hpFill);
+        if (hpBarCtrl != null)
+        {
+            hpBarCtrl.setBarValue(hpFill);
+            HpBarManager.instance.damageText(damage, hpBarCtrl.transform);
+        }
         if (nowHp <= 0)
         {
             //사망처리

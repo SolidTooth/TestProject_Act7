@@ -102,16 +102,20 @@ public class WeaponCtrl : MonoBehaviour
         {
             //스킬 버튼 눌렀을때 모션 스킵 가능한지 판단 후 빠르게 발동 - 데모에서 구현하지 않음
             //스킬 발동형태 - 즉시발동 AttackRange = 0 , 사거리 확인
-            if (weapon.AttackRange <= 0 || weapon.AttackRange <= myUnitCtrl.TargetCtrl.TargetDis)
+            if (weapon.AttackRange <= 0 || weapon.AttackRange > myUnitCtrl.TargetCtrl.TargetDis)
             {  //스킬 등록당시 적과의 거리가 사거리 안쪽일 경우만 등록
                 if (nowSkill == null && basicWeapon.IsAttacking == false)
                 {
                     nowSkill = weapon;
                 }
-                else
+                else if (NowWeapon != weapon)//같은 스킬 연속사용은 안됨
                 {
                     nextSkill = weapon;
                 }
+            }
+            else if (weapon.IsAttackOn)
+            {
+                ToastManager.Toast("사정거리에 적이 없습니다.");
             }
         }
     }

@@ -22,7 +22,8 @@ public class UnitCtrl : MonoBehaviour
 
     [Header("상태관련")]
     [SerializeField]
-    private HpCtrl hpCtrl; public bool IsLife => hpCtrl.IsLife;
+    private HpCtrl hpCtrl; public HpCtrl HpCtrl => hpCtrl;
+    public bool IsLife => hpCtrl.IsLife;
     [SerializeField]
     private UnitState nowState;
     [SerializeField]
@@ -274,7 +275,7 @@ public class UnitCtrl : MonoBehaviour
     }
     public void attackEffectOff()
     {
-        weaponCtrl.NowWeapon.attackEffectOn();
+        weaponCtrl.NowWeapon.attackEffectOff();
     }
     public void attackTriggerOn()
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TargetCtrl : MonoBehaviour
 {
-    private UnitCtrl myUnitCtrl;
+    private UnitCtrl myUnitCtrl; public UnitCtrl UnitCtrl => myUnitCtrl;
 
     [SerializeField]
     private TargetKind myKind; public TargetKind MyKind => myKind;
